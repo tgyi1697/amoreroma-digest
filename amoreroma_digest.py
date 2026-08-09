@@ -81,7 +81,13 @@ from roma_keyword_scorer import score_article
 # ---------------------------------------------------------------------------
 
 MAX_AGE_HOURS = 24
-PURE_SOURCE_DAILY_LIMIT = 2
+# A felhasználó kérésére 4-re emelve (a vizpartok.hu-nál bevált 2-höz
+# képest) - Róma egy jóval szűkebb, specifikusabb téma, mint "vízpart"
+# általában, ezért a 4 "tiszta" utazási portál (travelbook.de,
+# traveltomorrow.com, siviaggia.it, bbc.com/travel) egyenként ritkábban
+# hoz Róma-releváns cikket - a magasabb limit nagyobb mozgásteret ad
+# ezeknek a forrásoknak, amikor mégis van jó találatuk.
+PURE_SOURCE_DAILY_LIMIT = 4
 
 # A felhasználó kérése szerint napi 6 hír a cél
 DAILY_TOTAL_LIMIT = 6
@@ -254,13 +260,34 @@ def collect_candidates():
     candidates = []
     cutoff = datetime.now(timezone.utc).replace(tzinfo=None) - timedelta(hours=MAX_AGE_HOURS)
 
+    # Diagnosztikai számlálók forrásonként - ez segít eldönteni egy üres/
+    # gyenge napnál, hogy egy adott forrás (pl. romatoday.it, reuters.com)
+    # EGYÁLTALÁN ad-e vissza nyers RSS-bejegyzést, és ebből hány jut át az
+    # előszűrésen (24 órás korhatár + kulcsszó/kizáró-lista) - enélkül a
+    # végső "Talált (előszűrt) jelölt: N" összesített szám nem árulja el,
+    # melyik forrás hibádzik vagy melyiknél túl szigorú/laza a szűrés.
+    source_stats = {name: {"raw": 0, "after_filter": 0, "http_error": False} for name in RSS_FEEDS}
+
     for source_name, urls in RSS_FEEDS.items():
         for feed_url in urls:
             try:
                 parsed = feedparser.parse(feed_url)
             except Exception as e:
                 print(f"  Hiba a feed beolvasásakor ({source_name}, {feed_url}): {e}")
+                source_stats[source_name]["http_error"] = True
                 continue
+
+            # A feedparser HTTP-hibánál (pl. 403/404) NEM mindig dob
+            # kivételt - a `status` mezőben jelenik meg, ha van. Ezt is
+            # jelezzük, mert pontosan ez a romatoday.it-nél/reuters.com-nál
+            # várható hibamód (bot-blokkolás, hibás URL stb.).
+            http_status = getattr(parsed, "status", None)
+            if http_status and http_status >= 400:
+                print(f"  Figyelmeztetés: {source_name} ({feed_url}) HTTP {http_status} "
+                      f"választ adott - a feed valószínűleg nem érhető el (blokkolás/hibás URL).")
+                source_stats[source_name]["http_error"] = True
+
+            source_stats[source_name]["raw"] += len(parsed.entries)
 
             for entry in parsed.entries:
                 title = entry.get("title", "")
@@ -301,6 +328,7 @@ def collect_candidates():
                         "published": published,
                         "rss_full_content": rss_full_content,
                     })
+                    source_stats[source_name]["after_filter"] += 1
 
     seen = set()
     unique = []
@@ -308,6 +336,12 @@ def collect_candidates():
         if c["link"] not in seen:
             seen.add(c["link"])
             unique.append(c)
+
+    print("Forrásonkénti bontás (nyers RSS-bejegyzés / előszűrésen átjutott):")
+    for name, stats in source_stats.items():
+        flag = " [HIBA/BLOKKOLÁS GYANÚJA]" if stats["http_error"] else ""
+        print(f"  {name}: {stats['raw']} / {stats['after_filter']}{flag}")
+
     return unique
 
 
