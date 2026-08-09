@@ -43,13 +43,13 @@ TECHNIKAI MEGJEGYZÉSEK AZ ÚJ FORRÁSOKRÓL:
   Google News-átirányításon mennek keresztül, ami néha nem enged teljes
   cikkszöveget letölteni. A meglévő "ha nincs elég tartalom, a cikk
   kimarad" védőháló ezt kezeli.
-- romatoday.it: a feed URL-je (RSS_FEEDS lent) a Citynews-hálózat többi
-  oldalán (pl. milanotoday.it/rss) látott minta alapján lett összeállítva,
-  DE MÉG NEM LETT ÉLESBEN LEELLENŐRIZVE - érdemes az első futás logját
-  megnézni, hogy tényleg érvényes XML-t ad-e vissza. A romatoday.it egy
-  ÁLTALÁNOS helyi hírportál (bűnügy, közlekedés, önkormányzati hírek is
-  benne vannak) - ezért KEYWORD_FILTERED_SOURCES-ként, szigorú
-  kulcsszó-előszűréssel kezeljük, NEM PURE_TRAVEL_SOURCES-ként.
+- romatoday.it: a felhasználó egy feedreader-nézettel (Feeder) megerősítette,
+  hogy a feed (https://www.romatoday.it/rss) ÉLESBEN MŰKÖDIK - a korábbi
+  üres/403-as eredmény valószínűleg a záró perjeles URL-változat
+  (/rss/ vs /rss) miatt volt, ezt javítottuk. A feed tartalma viszont
+  túlnyomórészt HELYI KÖZÉLETI/BŰNÜGYI/KÖZLEKEDÉSI hír, ezért
+  KEYWORD_FILTERED_SOURCES-ként, szigorú kulcsszó-előszűréssel kezeljük,
+  NEM PURE_TRAVEL_SOURCES-ként.
 
 A Facebook-posztolás NEM ennek a scriptnek a feladata (egyelőre nem is
 kérték, csak később, opcionálisan).
@@ -179,8 +179,14 @@ RSS_FEEDS = {
         REUTERS_FEED_URL,
     ],
     "romatoday.it": [
-        # MÉG NEM ELLENŐRIZVE ÉLESBEN - lásd a technikai megjegyzést fent.
-        "https://www.romatoday.it/rss/",
+        # A felhasználó egy feedreader-nézettel (Feeder) megerősítette,
+        # hogy ez a feed ÉLESBEN MŰKÖDIK, és tartalommal is bír - de a
+        # tartalma túlnyomórészt HELYI KÖZÉLETI/BŰNÜGYI/KÖZLEKEDÉSI hír
+        # (pl. kábítószer-ügy, útlezárás, önkormányzati költségvetés), NEM
+        # Róma-turisztikai/kulturális témájú. Emiatt kritikus a szigorú
+        # KEYWORD_FILTERED_SOURCES előszűrés + AI-válogatás erre a
+        # forrásra - enélkül túlnyomó többségben irreleváns jelöltet adna.
+        "https://www.romatoday.it/rss",
     ],
 }
 
