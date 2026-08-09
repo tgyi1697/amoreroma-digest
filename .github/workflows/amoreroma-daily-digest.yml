@@ -1,0 +1,39 @@
+name: Róma-témájú napi hír-digest (amoreroma.hu)
+
+on:
+  schedule:
+    # Minden nap 08:00-kor UTC - a hetedhetorszag.hu-s (06:30 UTC), a
+    # vizpartok-daily-digest.yml (07:00 UTC) és a hegycsucsok-daily-
+    # digest.yml (07:30 UTC) UTÁN, hogy a négy Anthropic API-hívás-sorozat
+    # ne egy időben terhelje a rate limitet.
+    - cron: "0 8 * * *"
+  workflow_dispatch: {}   # kézi indítás a GitHub felületén - teszteléshez
+
+jobs:
+  send-amoreroma-digest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repó klónozása
+        uses: actions/checkout@v4
+
+      - name: Python telepítése
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Függőségek telepítése
+        run: pip install -r requirements.txt
+
+      - name: Róma-témájú digest futtatása és email küldése
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+          AMOREROMA_EMAIL_TO: ${{ secrets.AMOREROMA_EMAIL_TO }}
+          AMOREROMA_WP_SITE_URL: ${{ secrets.AMOREROMA_WP_SITE_URL }}
+          AMOREROMA_WP_USER: ${{ secrets.AMOREROMA_WP_USER }}
+          AMOREROMA_WP_APP_PASSWORD: ${{ secrets.AMOREROMA_WP_APP_PASSWORD }}
+        run: python amoreroma_digest.py
