@@ -618,11 +618,17 @@ HOSSZ: írj 4-6 bekezdést, összesen kb. 300-450 szó terjedelemben.
 FORRÁSMEGJELÖLÉS A SZÖVEGBEN - KRITIKUS SZABÁLY: a cikk elején vagy \
 második bekezdésében természetes módon utalj a forrásra, ÉS ehhez PONTOSAN \
 a következő szöveget használd szó szerint, változtatás nélkül: \
-"{source_name}" (pl. "A(z) {source_name} beszámolója szerint..." vagy "A(z) \
-{source_name} cikke szerint..."). Ez azért kritikusan fontos, mert a \
-rendszer ez alapján a PONTOS szöveg alapján fogja automatikusan linkkel \
-ellátni a forrás nevét a cikk publikálásakor - ha átírod vagy más \
-elnevezést használsz, a linkelés nem fog működni.
+"{source_name}". A névelőt (a/az) a forrásnév KIEJTÉSE alapján válaszd meg \
+HELYESEN, ahogy egy magyar anyanyelvű írná (pl. "Az orf.at beszámolója \
+szerint..." mert magánhangzóval kezdődik a kiejtése, "A wantedinrome.com \
+cikke szerint..." mert mássalhangzóval) - SOHA ne írd le szó szerint azt, \
+hogy "A(z)", ez NEM helyes magyar szöveg, csak egy általános jelölés volt \
+a példában, nem szó szerint másolandó minta. A forrásnév MAGÁT (a \
+"{source_name}" szót) viszont szó szerint, változtatás nélkül kell \
+használnod, mert a rendszer ez alapján a PONTOS szöveg alapján fogja \
+automatikusan linkkel ellátni a forrás nevét a cikk publikálásakor - ha a \
+forrásnevet átírod vagy más elnevezést használsz, a linkelés nem fog \
+működni.
 
 KRITIKUS SZABÁLY - HIÁNYOS TARTALOM: ha a letöltött cikkszöveg + az \
 RSS-leírás együtt sem elég egy értelmes, tényszerű összefoglalóhoz, VAGY \
