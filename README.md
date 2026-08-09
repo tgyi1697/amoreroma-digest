@@ -36,12 +36,15 @@ Napi Róma-témájú hír-digest az amoreroma.hu oldalhoz. A
   egy Google News-alapú proxy-feedet használunk (`REUTERS_FEED_URL` a
   scriptben). Érdemes megnézni a futási logban, hogy hoz-e egyáltalán
   releváns, letölthető cikkeket.
-- **romatoday.it forrás**: az RSS-feed URL-je (`https://www.romatoday.it/rss/`)
-  a Citynews-hálózat többi oldalán (pl. milanotoday.it/rss) látott minta
-  alapján lett összeállítva, DE MÉG NINCS ÉLESBEN LEELLENŐRIZVE - érdemes
-  az első futás logját megnézni, hogy tényleg érvényes XML-t ad-e vissza.
-  Mivel ez egy ÁLTALÁNOS helyi hírportál (bűnügy, közlekedés is benne
-  van), szigorú kulcsszó-előszűréssel + AI-válogatással kezeljük.
+- **romatoday.it forrás**: a felhasználó egy feedreader-nézettel
+  megerősítette, hogy a feed (`https://www.romatoday.it/rss`, záró perjel
+  NÉLKÜL) élesben működik és tartalmat is ad - a korábbi üres/403-as
+  eredmény valószínűleg a záró perjeles URL-változat miatt volt, ez már
+  javítva van a scriptben. A feed tartalma viszont túlnyomórészt helyi
+  közéleti/bűnügyi/közlekedési hír, ezért szigorú kulcsszó-előszűréssel +
+  AI-válogatással kezeljük - érdemes az első pár futás
+  "Forrásonkénti bontás" logját megnézni, mennyi valóban releváns találat
+  jön belőle.
 - **WordPress-struktúra**: az amoreroma.hu ACF-mezői/egyéni taxonómiái
   MÉG NINCSENEK feltérképezve. A `wp_create_draft()` jelenleg a
   vizpartok.hu-nál bevált, ACF nélküli mintát követi (sima "posts"
