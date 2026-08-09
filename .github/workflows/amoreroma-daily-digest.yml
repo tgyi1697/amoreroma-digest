@@ -6,7 +6,7 @@ on:
     # vizpartok-daily-digest.yml (07:00 UTC) és a hegycsucsok-daily-
     # digest.yml (07:30 UTC) UTÁN, hogy a négy Anthropic API-hívás-sorozat
     # ne egy időben terhelje a rate limitet.
-    - cron: "0 8 * * *"
+    - cron: "12 3 * * *"
   workflow_dispatch: {}   # kézi indítás a GitHub felületén - teszteléshez
 
 jobs:
