@@ -1095,7 +1095,32 @@ def send_email(subject, body_markdown):
 # MAIN
 # ---------------------------------------------------------------------------
 
+REQUIRED_ENV_VARS = [
+    "ANTHROPIC_API_KEY",
+    "SMTP_HOST", "SMTP_PORT", "SMTP_USER", "SMTP_PASSWORD", "EMAIL_FROM",
+    "AMOREROMA_EMAIL_TO",
+    "AMOREROMA_WP_SITE_URL", "AMOREROMA_WP_USER", "AMOREROMA_WP_APP_PASSWORD",
+]
+
+
+def validate_env():
+    """Fail-fast ellenőrzés a futás legelején: ha egy szükséges GitHub
+    Secret hiányzik VAGY üres string (pl. elgépelt secret-név, vagy be sem
+    lett állítva), itt egyetlen, egyértelmű hibaüzenettel álljon meg a
+    script - ne 10+ kusza "Invalid URL" / SMTP hibán keresztül derüljön ki
+    a végén, ahogy egy korábbi éles futásnál történt."""
+    missing = [name for name in REQUIRED_ENV_VARS if not os.environ.get(name)]
+    if missing:
+        print("HIBA: a következő GitHub Secret(ek) hiányoznak vagy üresek: "
+              + ", ".join(missing))
+        print("Ellenőrizd a repó Settings → Secrets and variables → Actions "
+              "alatt, hogy pontosan ezekkel a nevekkel léteznek-e, és van-e "
+              "értékük.")
+        raise SystemExit(1)
+
+
 def main():
+    validate_env()
     candidates = collect_candidates()
     print(f"Talált (előszűrt) jelölt: {len(candidates)}")
 
