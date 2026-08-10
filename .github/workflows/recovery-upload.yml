@@ -1,0 +1,26 @@
+name: Email-alapú WordPress helyreállítás (amoreroma.hu)
+
+on:
+  workflow_dispatch: {}   # csak kézi indítás
+
+jobs:
+  recover-from-email:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repó klónozása
+        uses: actions/checkout@v4
+
+      - name: Python telepítése
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Függőségek telepítése
+        run: pip install -r requirements.txt
+
+      - name: Helyreállítás a mentett emailből
+        env:
+          AMOREROMA_WP_SITE_URL: ${{ secrets.AMOREROMA_WP_SITE_URL }}
+          AMOREROMA_WP_USER: ${{ secrets.AMOREROMA_WP_USER }}
+          AMOREROMA_WP_APP_PASSWORD: ${{ secrets.AMOREROMA_WP_APP_PASSWORD }}
+        run: python email_recovery_upload.py
