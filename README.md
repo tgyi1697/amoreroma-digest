@@ -9,9 +9,27 @@ Napi Róma-témájú hír-digest az amoreroma.hu oldalhoz. A
 - `amoreroma_digest.py` - fő script (RSS-begyűjtés → AI-válogatás →
   összefoglalás → WP-piszkozat → email)
 - `roma_keyword_scorer.py` - utólagos minőségbiztosítási pontozó
+- `email_recovery_upload.py` - email-alapú WP-helyreállító (ha a piszkozat-
+  létrehozás elesik, pl. Imunify360 blokkolás miatt)
+- `recovery-upload.yml` - GitHub Actions workflow a helyreállításhoz
+  (`.github/workflows/` alá másolandó, kézi indítású)
 - `amoreroma-daily-digest.yml` - GitHub Actions workflow (`.github/workflows/`
   alá másolandó)
 - `requirements.txt` - Python-függőségek
+
+## Helyreállítás (ha a WP-feltöltés elesik, de az email kiment)
+
+1. Mentsd le a digest emailt `.eml` fájlként (vagy másold ki a szöveges
+   törzsét egy `.txt` fájlba).
+2. Töltsd fel a repóba `recovery_email.eml` (vagy `recovery_email.txt`)
+   néven.
+3. Actions fül → "Email-alapú WordPress helyreállítás (amoreroma.hu)" →
+   Run workflow.
+
+A script automatikusan kihagyja azokat a cikkeket, amik már sikeresen
+feltöltődtek (az email "📤 Piszkozatként feltöltve" jelölése vagy az
+`[ADATOK: ...]` blokk `already_uploaded: true` mezője alapján) - nem
+hoz létre duplikátumot.
 
 ## Beállítás
 
